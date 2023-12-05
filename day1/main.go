@@ -14,7 +14,6 @@ func check(e error){
 }
 
 func main() {
-	fmt.Println("Hello advent")
 	file, err := os.Open(os.Args[1])
 	check(err)
 
@@ -38,7 +37,7 @@ func main() {
 			}
 
 			lastIndex := strings.LastIndex(line, s)
-			if index != -1 && (index > lastStrDigit || lastStrDigit == -1) {
+			if lastIndex != -1 && (lastIndex > lastStrDigit || lastStrDigit == -1) {
 				lastStrDigit = lastIndex
 				lastDigitVal = i + 1
 			}
@@ -62,8 +61,7 @@ func main() {
 		}
 
 		lineNumber := firstDigitVal * 10 + lastDigitVal
-		fmt.Println(line)
-		fmt.Println(lineNumber)
+		fmt.Println(line, lineNumber)
 		total += lineNumber
 	}
 	fmt.Println(total)
