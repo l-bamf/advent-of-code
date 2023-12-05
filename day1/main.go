@@ -29,6 +29,7 @@ func main() {
 		firstDigitVal := 0
 		lastStrDigit := -1
 		lastDigitVal := 0
+		
 		for i, s := range digitStrs {
 			index := strings.Index(line, s)
 			if index != -1 && (index < firstStrDigit || firstStrDigit == -1) {
@@ -51,6 +52,7 @@ func main() {
 				break
 			}
 		}
+
 		for i := len(runes)-1; i >= 0; i-- {
 			char := runes[i]
 			if char > zeroRune && char <= nineRune && (lastStrDigit == -1 || (lastStrDigit != -1 && i > lastStrDigit)) {
@@ -58,7 +60,9 @@ func main() {
 				break
 			}
 		}
+
 		lineNumber := firstDigitVal * 10 + lastDigitVal
+		fmt.Println(line)
 		fmt.Println(lineNumber)
 		total += lineNumber
 	}
