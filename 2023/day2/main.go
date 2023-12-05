@@ -27,7 +27,10 @@ func main() {
 		id, err := strconv.Atoi(halves[0][5:])
 		check(err)
 		sets := strings.Split(halves[1], ";")
-		valid := true
+
+		maxBlue := 0
+		maxRed := 0
+		maxGreen := 0
 
 		for _, set := range sets {
 			balls := strings.Split(set, ",")
@@ -35,23 +38,20 @@ func main() {
 				split := strings.Split(draw[1:], " ")
 				num, err := strconv.Atoi(split[0])
 				check(err)
-				if split[1] == "blue" && num > 14 {
-					valid = false
+				if split[1] == "blue" && num > maxBlue {
+					maxBlue = num
 				}
-				if split[1] == "red" && num > 12 {
-					valid = false
+				if split[1] == "red" && num > maxRed {
+					maxRed = num
 				}
-				if split[1] == "green" && num > 13 {
-					valid = false
+				if split[1] == "green" && num > maxGreen {
+					maxGreen = num
 				}
 			}
 		}
-		fmt.Println(id, valid)
-
-		if valid {
-			total += id
-		}
-
+		power := maxBlue * maxRed * maxGreen
+		fmt.Println(id, power)
+		total += power
 	}
 	fmt.Println(total)
 }
