@@ -26,6 +26,7 @@ func main() {
 		halves := strings.Split(line, ":")
 		id, err := strconv.Atoi(halves[0][5:])
 		check(err)
+
 		sets := strings.Split(halves[1], ";")
 
 		maxBlue := 0
