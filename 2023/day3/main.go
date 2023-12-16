@@ -28,6 +28,7 @@ func parseInput(filename string) []string{
 	return engineMap
 }
 
+
 type NumPair struct {
 	val int
 	bounds []int
@@ -50,60 +51,57 @@ func findNums(engineMap []string) [][]NumPair {
 	return pairs
 }
 
-func isPart (rowIndex int, numPair NumPair, engineMap []string) bool{
-	r := regexp.MustCompile(`[\!\@\#\$\%\^\&\*\(\)\-\_\+\=\\\/]`)
-
-	left := numPair.bounds[0] - 1
-	if left < 0 {
-		left = 0
+func findGears(engineMap []string) [][]int {
+	var gears [][]int
+	gearRegexp := regexp.MustCompile(`\*`)
+	for _, line := range engineMap {
+		gearBounds := gearRegexp.FindAllStringIndex(line, -1)
+		var lineGears []int
+		for _, bounds := range gearBounds {
+			lineGears = append(lineGears, bounds[0])
+		}
+		gears = append(gears, lineGears)
 	}
+	return gears
+}
 
-	right := numPair.bounds[1] + 1
-	lineLength := len(engineMap[0])
-	if right >= lineLength{
-		right = lineLength 
-	}
-
-	if rowIndex != 0 {
-		rowAbove := engineMap[rowIndex - 1]
-		trimmedRow := rowAbove[left:right]
-		if r.MatchString(trimmedRow) {
-			return true
-		} else {
-			fmt.Println(trimmedRow)
+func adjacentNums(index int, nums []NumPair) []int {
+	var inRangeNums []int
+	for _, num := range nums {
+		if index <= num.bounds[1] && index >= num.bounds[0] - 1 {
+			inRangeNums = append(inRangeNums, num.val)	
 		}
 	}
+	return inRangeNums
+}
 
-	if rowIndex != len(engineMap) -1 {
-		rowBelow := engineMap[rowIndex + 1]
-		trimmedRow := rowBelow[left:right]
-		if r.MatchString(trimmedRow) {
-			return true
-		} else {
-			fmt.Println(trimmedRow)
+func calcGears(engineMap []string, gears [][]int, nums [][]NumPair) int {
+	total := 0
+	for i, line := range gears {
+		for _, gearIndex := range line {
+			var validNums []int
+			// Line above
+			if i != 0 {
+				validNums = append(validNums, adjacentNums(gearIndex, nums[i - 1])...)
+			}
+			// Line below
+			if i != len(gears) - 1 {
+				validNums = append(validNums, adjacentNums(gearIndex, nums[i + 1])...)
+			}
+			validNums = append(validNums, adjacentNums(gearIndex, nums[i])...)
+
+			if len(validNums) == 2 {
+				total += validNums[0] * validNums[1]
+			}
 		}
 	}
-	
-	trimmedRow := engineMap[rowIndex][left:right]
-	if r.MatchString(trimmedRow){
-		return true
-	} else {
-		fmt.Println(trimmedRow)
-	}
-	fmt.Println(numPair.val)
-	return false
+	return total
 }
 
 func main() {
 	engineMap := parseInput("input.txt")
-	pairs := findNums(engineMap)
-	total := 0
-	for i, linePairs := range pairs {
-		for _, pair := range linePairs {
-			if isPart(i, pair, engineMap) {
-				total += pair.val
-			}
-		}
-	}
+	gears := findGears(engineMap)
+	nums := findNums(engineMap)
+	total := calcGears(engineMap, gears, nums)
 	fmt.Println(total)
 }
